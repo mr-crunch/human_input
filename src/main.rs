@@ -49,7 +49,7 @@ mod human_input {
             "default index must be in options slice"
         );
         loop {
-            print!("{}", prompt);
+            print!("{} [", prompt);
             let mut options_iter = options.iter().enumerate();
             if let Some((_, option)) = options_iter.next() {
                 print!(r#"1: "{}""#, option.as_ref());
@@ -72,11 +72,15 @@ mod human_input {
             }
             match ans.parse::<usize>() {
                 Ok(a) => {
-                    let ans = a - 1;
-                    if ans < options.len() {
-                        return Ok(ans);
+                    if a == 0 {
+                        println!("0 is not a valid option");
                     } else {
-                        println!("{} is not a valid option (too big)", ans);
+                        let ans = a - 1;
+                        if ans < options.len() {
+                            return Ok(ans);
+                        } else {
+                            println!("{} is not a valid option (too big)", ans);
+                        }
                     }
                 }
                 Err(_) => {
@@ -90,6 +94,14 @@ mod human_input {
 fn main() {
     println!("Hello world!");
     println!("input: {}", input());
+    match human_input::read_menu(
+        "enter choice: ",
+        &["new bill", "list bills", "print month", "list year"],
+        None,
+    ) {
+        Ok(num) => println!("choice: {}", num),
+        Err(error) => eprintln!("error: {:?}", error),
+    }
 }
 
 fn input() -> String {
