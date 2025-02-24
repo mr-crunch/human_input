@@ -62,29 +62,29 @@ mod human_input {
             }
             print!("]: ");
             io::stdout().flush()?;
-            let mut buf = String::new();
-            io::stdin().read_line(&mut buf)?;
-            let ans = buf.trim();
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            let choice = input.trim();
             if let Some(val) = default {
-                if ans.is_empty() {
+                if choice.is_empty() {
                     return Ok(val);
                 }
             }
-            match ans.parse::<usize>() {
+            match choice.parse::<usize>() {
                 Ok(a) => {
                     if a == 0 {
                         println!("0 is not a valid option");
                     } else {
-                        let ans = a - 1;
-                        if ans < options.len() {
-                            return Ok(ans);
+                        let choice = a;
+                        if (choice - 1) < options.len() {
+                            return Ok(choice);
                         } else {
-                            println!("{} is not a valid option (too big)", ans);
+                            println!("{} is not a valid option (too big)", choice);
                         }
                     }
                 }
                 Err(_) => {
-                    println!("{} is not a valid option", ans);
+                    println!("{} is not a valid option", choice);
                 }
             }
         }
@@ -97,7 +97,7 @@ fn main() {
     match human_input::read_menu(
         "enter choice: ",
         &["new bill", "list bills", "print month", "list year"],
-        None,
+        Some(1),
     ) {
         Ok(num) => println!("choice: {}", num),
         Err(error) => eprintln!("error: {:?}", error),
