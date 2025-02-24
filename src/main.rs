@@ -50,6 +50,39 @@ mod human_input {
         );
         loop {
             print!("{}", prompt);
+            let mut options_iter = options.iter().enumerate();
+            if let Some((_, option)) = options_iter.next() {
+                print!(r#"1: "{}""#, option.as_ref());
+            }
+            for (idx, option) in options_iter {
+                print!(r#", {}: "{}""#, idx + 1, option.as_ref());
+            }
+            if let Some(def) = default {
+                print!(" (default: {})", def + 1);
+            }
+            print!("]: ");
+            io::stdout().flush()?;
+            let mut buf = String::new();
+            io::stdin().read_line(&mut buf)?;
+            let ans = buf.trim();
+            if let Some(val) = default {
+                if ans.is_empty() {
+                    return Ok(val);
+                }
+            }
+            match ans.parse::<usize>() {
+                Ok(a) => {
+                    let ans = a - 1;
+                    if ans < options.len() {
+                        return Ok(ans);
+                    } else {
+                        println!("{} is not a valid option (too big)", ans);
+                    }
+                }
+                Err(_) => {
+                    println!("{} is not a valid option", ans);
+                }
+            }
         }
     }
 }
