@@ -42,32 +42,29 @@ mod human_input {
     ) -> io::Result<usize> {
         assert!(
             if let Some(num) = default {
-                num < options.len()
+                num < options.len() && num != 0
             } else {
                 true
             },
             "default index must be in options slice"
         );
         loop {
-            print!("{} [", prompt);
+            println!("{}", prompt);
             let mut options_iter = options.iter().enumerate();
             if let Some((_, option)) = options_iter.next() {
-                print!(r#"1: "{}""#, option.as_ref());
+                println!(r#"1: "{}""#, option.as_ref());
             }
             for (idx, option) in options_iter {
-                print!(r#", {}: "{}""#, idx + 1, option.as_ref());
+                println!(r#"{}: "{}""#, idx + 1, option.as_ref());
             }
-            if let Some(def) = default {
-                print!(" (default: {})", def + 1);
-            }
-            print!("]: ");
+            print!("choice: ");
             io::stdout().flush()?;
             let mut input = String::new();
             io::stdin().read_line(&mut input)?;
             let choice = input.trim();
-            if let Some(val) = default {
+            if let Some(def) = default {
                 if choice.is_empty() {
-                    return Ok(val);
+                    return Ok(def);
                 }
             }
             match choice.parse::<usize>() {
