@@ -77,12 +77,12 @@ mod human_input {
 fn main() {
     println!("Hello world!");
     println!("input: {}", input());
-    match human_input::read_menu(
-        "enter choice: ",
-        &["new bill", "list bills", "print month", "list year"],
-    ) {
-        Ok(num) => println!("choice: {}", num),
-        Err(error) => eprintln!("error: {:?}", error),
+    match print_menu() {
+        1 => println!("selected option 1!"),
+        2 => println!("selected option 2!"),
+        3 => println!("selected option 3!"),
+        4 => println!("selected option 4!"),
+        _ => println!("no selection??"),
     }
 }
 
@@ -93,5 +93,20 @@ fn input() -> String {
             eprintln!("error: {:?}", error);
             String::from("error")
         }
+    }
+}
+
+fn print_menu() -> usize {
+    loop {
+        match human_input::read_menu(
+            "enter choice: ",
+            &["new bill", "list bills", "print month", "list year"],
+        ) {
+            Ok(choice) => return choice,
+            Err(error) => {
+                eprintln!("error: {:?}", error);
+                continue;
+            }
+        };
     }
 }
