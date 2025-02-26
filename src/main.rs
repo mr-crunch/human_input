@@ -35,37 +35,23 @@ mod human_input {
         }
     }
 
-    pub fn read_menu(
-        prompt: &str,
-        options: &[impl AsRef<str>],
-        default: Option<usize>,
-    ) -> io::Result<usize> {
-        assert!(
-            if let Some(num) = default {
-                num < options.len() && num != 0
-            } else {
-                true
-            },
-            "default index must be in options slice"
-        );
+    pub fn read_menu(prompt: &str, options: &[impl AsRef<str>]) -> io::Result<usize> {
         loop {
             println!("{}", prompt);
             let mut options_iter = options.iter().enumerate();
             if let Some((_, option)) = options_iter.next() {
-                println!(r#"1: "{}""#, option.as_ref());
+                println!("1: {}", option.as_ref());
             }
             for (idx, option) in options_iter {
-                println!(r#"{}: "{}""#, idx + 1, option.as_ref());
+                println!("{}: {}", idx + 1, option.as_ref());
             }
             print!("choice: ");
             io::stdout().flush()?;
             let mut input = String::new();
             io::stdin().read_line(&mut input)?;
             let choice = input.trim();
-            if let Some(def) = default {
-                if choice.is_empty() {
-                    return Ok(def);
-                }
+            if choice.is_empty() {
+                return Ok(1);
             }
             match choice.parse::<usize>() {
                 Ok(a) => {
@@ -94,7 +80,6 @@ fn main() {
     match human_input::read_menu(
         "enter choice: ",
         &["new bill", "list bills", "print month", "list year"],
-        Some(1),
     ) {
         Ok(num) => println!("choice: {}", num),
         Err(error) => eprintln!("error: {:?}", error),
